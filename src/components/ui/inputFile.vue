@@ -79,8 +79,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import uploadIcon from '../../assets/icons/upload-light.svg'
-import trashIcon from '../../assets/icons/trash-purple.svg'
+import uploadIcon from '@/assets/icons/upload-light.svg'
+import trashIcon from '@/assets/icons/trash-purple.svg'
 
 interface Props {
   modelValue?: FileList | File[] | null

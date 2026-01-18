@@ -10,16 +10,11 @@
   </button>
 </template>
 <script lang="ts" setup>
-  const props = defineProps(
-    {
-      label: {
-        type: String,
-        default: 'Novo Projeto',
-      },
-      outline: {
-        type: Boolean,
-        default: false,
-      },
-    }
-  );
+  const props = withDefaults(defineProps<{
+    label?: string;
+    outline?: boolean;
+  }>(), {
+    label: 'Novo Projeto',
+    outline: false,
+  });
 </script>

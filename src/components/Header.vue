@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import SearchBar from './SearchBar.vue';
-  import logo from '../assets/logo.svg';
+  import logo from '@/assets/logo.svg';
 
   const showSearchBar = ref(false);
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import Button from './ui/button.vue';
+  import Button from '@/components/ui/button.vue';
 </script>
 <template>
   <div class="py-15 px-10">

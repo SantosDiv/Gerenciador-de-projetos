@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import {ref, onMounted, onUnmounted} from 'vue';
-  import backwardHistory from '../assets/icons/backward-history.svg';
+  import backwardHistory from '@/assets/icons/backward-history.svg';
 
   const searchQuery = ref('');
   const searchSection = ref<HTMLElement | null>(null);

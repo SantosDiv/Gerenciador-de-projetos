@@ -3,7 +3,7 @@
   import trashPurpleIcon from '../../assets/icons/trash-purple.svg';
 
   const props = defineProps<{
-    projectId: number;
+    projectId: string;
   }>();
 
   const emit = defineEmits<{

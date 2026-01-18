@@ -7,17 +7,10 @@
   import CalendarCheckLight from '../../assets/icons/calendar-check-light.svg';
   import Dropdown from './dropdown.vue';
   import Modal from '../ui/modal.vue';
+  import type { IProject } from '@/interfaces/project';
 
   const props = defineProps<{
-    project: {
-      id: number;
-      name: string;
-      client: string;
-      startAt: string;
-      endAt: string;
-      thumb: string;
-      favorited: boolean;
-    };
+    project: IProject;
   }>();
 
   const openedDropdown = ref(false);
@@ -69,11 +62,11 @@
       <div class="space-y-4 border-t border-gray-light-100 pt-4 text-gray">
         <div class="flex gap-4 items-center">
           <img :src="CalendarDayLight" alt="Ícone de Calendário indicando o dia de início do projeto">
-          <p>{{ project.startAt }}</p>
+          <p>{{ project.startDate }}</p>
         </div>
         <div class="flex gap-4 items-center">
           <img :src="CalendarCheckLight" alt="Ícone de Calendário indicando a data de término do projeto">
-          <p>{{ project.endAt }}</p>
+          <p>{{ project.endDate }}</p>
         </div>
       </div>
 

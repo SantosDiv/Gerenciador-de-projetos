@@ -1,68 +1,35 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import Form from '@/components/Form.vue'
+import type { IProject } from '@/interfaces/project'
+import projectApi from '@/api/projectApi'
 
 const route = useRoute()
 const projectId = route.params.id
 
-const projectName = ref('')
-const projectDescription = ref('')
+const project = ref<IProject | null>(null)
+
+async function fetchProject(): Promise<void> {
+  project.value = await projectApi.getProjectById(projectId as string);
+  return;
+}
 
 onMounted(() => {
-  // Logic to load project data based on ID
-  console.log('Loading project with ID:', projectId)
-  // Simulate loading data
-  projectName.value = `Projeto ${projectId}`
-  projectDescription.value = 'Descrição do projeto carregada...'
+  fetchProject();
 })
-
-const handleUpdate = () => {
-  // Logic to update project
-  console.log('Updating project with ID:', projectId)
-}
 </script>
 
 <template>
-  <div class="p-4">
-    <h1 class="text-2xl font-bold mb-6">Editar Projeto</h1>
-    <p class="text-gray-600 mb-4">ID do Projeto: {{ projectId }}</p>
-    
-    <div class="max-w-md">
-      <form @submit.prevent="handleUpdate" class="space-y-4">
-        <div>
-          <label for="projectName" class="block text-sm font-medium text-gray-700 mb-2">
-            Nome do Projeto
-          </label>
-          <input 
-            type="text" 
-            id="projectName"
-            v-model="projectName"
-            class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Digite o nome do projeto"
-          />
-        </div>
-        <div>
-          <label for="projectDescription" class="block text-sm font-medium text-gray-700 mb-2">
-            Descrição
-          </label>
-          <textarea 
-            id="projectDescription"
-            v-model="projectDescription"
-            rows="4"
-            class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Digite a descrição do projeto"
-          ></textarea>
-        </div>
-        <button 
-          type="submit"
-          class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors"
-        >
-          Atualizar Projeto
-        </button>
-      </form>
+  <div class="pt-18 px-10">
+    <div class="flex items-center gap-2 max-w-20 text-secondary cursor-pointer" @click="$router.back()">
+      <v-icon name="hi-arrow-sm-left" scale="1.3" />
+      <span class="text-md">Voltar</span>
+    </div>
+    <h1 class="text-2xl font-semibold mt-2 mb-6 text-blue">Editar projeto</h1>
+    <Form v-if="project" :project-data="project" action="edit" />
+    <div v-else class="flex justify-center items-center py-10">
+      <span class="text-gray-500">Carregando dados do projeto...</span>
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>
