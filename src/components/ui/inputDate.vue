@@ -20,7 +20,7 @@
         :required="required"
         :disabled="disabled"
         :readonly="readonly"
-        class="w-full px-4 py-3 pr-12 border border-gray rounded-lg bg-white text-primary placeholder-gray-light-300 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all duration-200"
+        class="w-full px-4 py-2 pr-12 border border-gray rounded-lg bg-white text-primary placeholder-gray-light-300 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all duration-200"
         :class="{
           'border-custom-red! focus:ring-custom-red!': hasError,
           'opacity-50 cursor-not-allowed': disabled,
@@ -52,7 +52,6 @@
       </div>
     </div>
     
-    <!-- Mensagem de erro -->
     <transition 
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="transform scale-95 opacity-0"
@@ -104,11 +103,9 @@ const emit = defineEmits<{
   'change': [value: string]
 }>()
 
-// Refs
 const inputRef = ref<HTMLInputElement>()
 const internalError = ref<string>('')
 
-// Computed
 const inputId = computed(() => 
   `input-date-${Math.random().toString(36).substring(2, 15)}`
 )
@@ -121,7 +118,6 @@ const errorMessage = computed(() =>
   props.errorMessage || internalError.value
 )
 
-// Methods
 const validateDate = (dateValue: string): string => {
   if (!dateValue) {
     if (props.required) {
@@ -130,7 +126,6 @@ const validateDate = (dateValue: string): string => {
     return ''
   }
 
-  // Verifica se a data é válida
   const date = moment(dateValue, 'YYYY-MM-DD', true)
   if (!date.isValid()) {
     return 'Data inválida'
@@ -139,24 +134,21 @@ const validateDate = (dateValue: string): string => {
   const today = moment().startOf('day')
   const selectedDate = moment(dateValue).startOf('day')
 
-  // Verifica se não permite datas passadas
   if (!props.allowPastDates && selectedDate.isBefore(today)) {
     return 'Selecione uma data válida'
   }
 
-  // Verifica data mínima
   if (props.minDate) {
     const minDate = moment(props.minDate).startOf('day')
     if (selectedDate.isBefore(minDate)) {
-      return `A data deve ser posterior a ${minDate.format('DD/MM/YYYY')}`
+      return `A data deve ser posterior ou igual a ${minDate.format('DD/MM/YYYY')}`
     }
   }
 
-  // Verifica data máxima
   if (props.maxDate) {
     const maxDate = moment(props.maxDate).startOf('day')
     if (selectedDate.isAfter(maxDate)) {
-      return `A data deve ser anterior a ${maxDate.format('DD/MM/YYYY')}`
+      return `A data deve ser anterior ou igual a ${maxDate.format('DD/MM/YYYY')}`
     }
   }
 
@@ -169,7 +161,6 @@ const handleInput = (event: Event) => {
   
   emit('update:modelValue', value)
   
-  // Validação em tempo real
   internalError.value = validateDate(value)
 }
 
@@ -189,14 +180,12 @@ const handleBlur = (event: FocusEvent) => {
   emit('blur', event)
 }
 
-// Watch para validar quando o valor muda externamente
 watch(() => props.modelValue, (newValue) => {
   if (newValue !== undefined) {
     internalError.value = validateDate(newValue)
   }
 })
 
-// Métodos públicos
 const focus = () => {
   inputRef.value?.focus()
 }
@@ -220,7 +209,6 @@ defineExpose({
 </script>
 
 <style scoped>
-/* Customização do input date */
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   position: absolute;

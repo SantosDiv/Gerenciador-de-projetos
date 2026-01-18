@@ -6,12 +6,14 @@ import calendarDayLight from '../assets/icons/calendar-day-light.svg';
 import calendarDayLightRed from '../assets/icons/calendar-day-light-red.svg';
 import calendarCheckDayLight from '../assets/icons/calendar-check-light.svg';
 import calendarCheckDayLightRed from '../assets/icons/calendar-check-light-red.svg';
+import InputFile from '../components/ui/inputFile.vue';
 
 const formData = ref({
   projectName: '',
   clientName: '',
   startDate: '',
-  endDate: ''
+  endDate: '',
+  projectImage: null as FileList | File[] | null
 });
 
 const formRefs = ref({
@@ -35,7 +37,16 @@ const dateIcons = {
 
 
 const isFormValid = computed(() => {
-  const allFieldsHaveValue = Object.values(formData.value).every(value => {
+  const allFieldsHaveValue = Object.entries(formData.value).every(item => {
+    const [key, value] = item;
+    if(key === 'projectImage') {
+      return true;
+    }
+
+    if(typeof value !== 'string') {
+      return value && value?.length > 0;
+    }
+
     return value && value.trim() !== '';
   });
   
@@ -64,6 +75,12 @@ const handleDateValidation = (fieldName: keyof typeof formValidation.value) => {
       const ref = formRefs.value[fieldName];
       const hasError = ref?.hasError;
       const hasValue = formData.value[fieldName].trim() !== '';
+      
+      if(fieldName === 'startDate' && hasValue) {
+        const endDateRef = formRefs.value.endDate;
+        endDateRef?.validate?.();
+      }
+
       const isValid = !hasError && hasValue;
       formValidation.value[fieldName] = isValid;
     });
@@ -126,10 +143,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-4">
-    <h1 class="text-2xl font-bold mb-6">Novo Projeto</h1>
-    <div class="max-w-md">
-      <form @submit.prevent="handleSubmit" class="space-y-4">
+  <div class="pt-18 px-10">
+    <div class="flex items-center gap-2 max-w-20 text-secondary cursor-pointer" @click="$router.back()">
+      <v-icon name="hi-arrow-sm-left" scale="1.3" />
+      <span class="text-md">Voltar</span>
+    </div>
+    <h1 class="text-2xl font-semibold mt-2 mb-6 text-blue">Novo Projeto</h1>
+    <section class="flex justify-center rounded-lg border border-gray-light-200 p-13">
+      <form @submit.prevent="handleSubmit" class="space-y-4 w-176 max-w-176">
         <div>
           <Input
             :ref="(el) => formRefs.projectName = el"
@@ -156,7 +177,7 @@ onMounted(() => {
             :validate-on-blur="true"
           />
         </div>
-        <section>
+        <section class="flex gap-4">
           <InputDate
             :ref="(el) => formRefs.startDate = el"
             v-model="formData.startDate"
@@ -189,20 +210,25 @@ onMounted(() => {
             </template>
           </InputDate>
         </section>
+        <InputFile
+          label="Capa do Projeto"
+          v-model="formData.projectImage"
+          class="w-full"
+        />
         <button 
           type="submit"
           :disabled="!isFormValid"
           :class="[
-            'w-full py-2 px-4 rounded-md transition-colors font-medium bg-secondary text-white',
+            'w-full py-2 px-4 rounded-full transition-colors font-medium bg-secondary text-white',
             isFormValid 
               ? 'hover:bg-primary cursor-pointer' 
               : 'opacity-50 cursor-not-allowed'
           ]"
         >
-          Criar Projeto
+          Salvar Projeto
         </button>
       </form>
-    </div>
+    </section>
   </div>
 </template>
 
