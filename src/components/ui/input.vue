@@ -23,10 +23,10 @@
       @blur="handleBlur"
       @focus="handleFocus"
       :class="[
-        'px-3 py-2 text-sm rounded-md border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50',
+        'px-3 py-2 text-md rounded-md border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-opacity-50',
         hasError 
           ? 'border-custom-red text-custom-red focus:border-custom-red focus:ring-red-500' 
-          : 'border-gray text-gray bg-white focus:border-blue focus:ring-blue',
+          : 'border-gray text-primary bg-white focus:border-blue focus:ring-blue',
         disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'
       ]"
     />

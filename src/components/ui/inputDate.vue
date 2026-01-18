@@ -72,7 +72,10 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import moment from 'moment'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.extend(customParseFormat)
 
 interface Props {
   modelValue?: string
@@ -126,27 +129,27 @@ const validateDate = (dateValue: string): string => {
     return ''
   }
 
-  const date = moment(dateValue, 'YYYY-MM-DD', true)
+  const date = dayjs(dateValue, 'YYYY-MM-DD', true)
   if (!date.isValid()) {
     return 'Data inválida'
   }
 
-  const today = moment().startOf('day')
-  const selectedDate = moment(dateValue).startOf('day')
+  const today = dayjs().startOf('day')
+  const selectedDate = dayjs(dateValue).startOf('day')
 
   if (!props.allowPastDates && selectedDate.isBefore(today)) {
     return 'Selecione uma data válida'
   }
 
   if (props.minDate) {
-    const minDate = moment(props.minDate).startOf('day')
+    const minDate = dayjs(props.minDate).startOf('day')
     if (selectedDate.isBefore(minDate)) {
       return `A data deve ser posterior ou igual a ${minDate.format('DD/MM/YYYY')}`
     }
   }
 
   if (props.maxDate) {
-    const maxDate = moment(props.maxDate).startOf('day')
+    const maxDate = dayjs(props.maxDate).startOf('day')
     if (selectedDate.isAfter(maxDate)) {
       return `A data deve ser anterior ou igual a ${maxDate.format('DD/MM/YYYY')}`
     }

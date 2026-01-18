@@ -2,6 +2,7 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useToast } from 'vue-toastification';
+  import dayjs from 'dayjs';
   import placeholderImage from '@/assets/placeholderImage.jpg';
   import favoriteIcon from '@/assets/icons/favorite.svg';
   import favoritedIcon from '@/assets/icons/favorited-icon.svg';
@@ -9,8 +10,14 @@
   import CalendarCheckLight from '@/assets/icons/calendar-check-light.svg';
   import Dropdown from './dropdown.vue';
   import Modal from '@/components/ui/modal.vue';
+
+  import projectApi from '@/api/projectApi';
+
   import type { IProject } from '@/interfaces/project';
-import projectApi from '@/api/projectApi';
+
+  const formatDatePtBr = (dateString: string): string => {
+    return dayjs(dateString).format('D [de] MMMM [de] YYYY');
+  };
 
   const props = defineProps<{
     project: IProject;
@@ -87,11 +94,11 @@ import projectApi from '@/api/projectApi';
       <div class="space-y-4 border-t border-gray-light-100 pt-4 text-gray">
         <div class="flex gap-4 items-center">
           <img :src="CalendarDayLight" alt="Ícone de Calendário indicando o dia de início do projeto">
-          <p>{{ project.startDate }}</p>
+          <p>{{ formatDatePtBr(project.startDate) }}</p>
         </div>
         <div class="flex gap-4 items-center">
           <img :src="CalendarCheckLight" alt="Ícone de Calendário indicando a data de término do projeto">
-          <p>{{ project.endDate }}</p>
+          <p>{{ formatDatePtBr(project.endDate) }}</p>
         </div>
       </div>
 
