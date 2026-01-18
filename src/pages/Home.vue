@@ -4,6 +4,7 @@ import NotFoundProjects from '../components/NotFoundProjects.vue';
 import ProjectCard from '../components/ProjectCard/index.vue';
 import Select from '../components/ui/select.vue';
 import Button from '../components/ui/button.vue';
+import Toggle from '../components/ui/toggle.vue';
 
 const projects = ref([
   { id: 1, name: 'Projeto Alpha', client: 'Clicksig', startAt: '2024-06-01', endAt: '2024-12-31', thumb: '', favorited: false },
@@ -36,7 +37,10 @@ const handleOrderChange = (option: { label: string, value: string | number } | n
         Projetos <span class="font-normal! text-[17px]">({{ projects.length }})</span>
       </h1>
       <div class="flex items-center justify-around gap-4">
-        <div id="toggle"></div>
+        <div class="flex items-center gap-2 min-w-45">
+          <Toggle />
+          <span class="text-primary">Apenas favoritos</span>
+        </div>
         <Select 
           :options="orderOptions"
           v-model="selectedOrder"
