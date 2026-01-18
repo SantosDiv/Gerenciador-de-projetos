@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import NotFoundProjects from '../components/NotFoundProjects.vue';
-import ProjectCard from '../components/ProjectCard/index.vue';
-import Select from '../components/ui/select.vue';
-import Button from '../components/ui/button.vue';
-import Toggle from '../components/ui/toggle.vue';
+import NotFoundProjects from '@/components/NotFoundProjects.vue';
+import ProjectCard from '@/components/ProjectCard/index.vue';
+import Select from '@/components/ui/select.vue';
+import Button from '@/components/ui/button.vue';
+import Toggle from '@/components/ui/toggle.vue';
 
 import projectApi from '@/api/projectApi';
 
