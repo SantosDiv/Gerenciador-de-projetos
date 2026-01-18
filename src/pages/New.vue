@@ -1,3 +1,7 @@
+<script setup lang="ts">
+  import Form from '@/components/Form.vue'
+</script>
+
 <template>
   <div class="pt-18 px-10">
     <div class="flex items-center gap-2 max-w-20 text-secondary cursor-pointer" @click="$router.back()">
@@ -8,7 +12,3 @@
     <Form />
   </div>
 </template>
-
-<script setup lang="ts">
-  import Form from '@/components/Form.vue'
-</script>
