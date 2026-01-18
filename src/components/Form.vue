@@ -82,6 +82,8 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, watch, nextTick, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 import Input from '@/components/ui/input.vue';
 import InputDate from '@/components/ui/inputDate.vue';
 import calendarDayLight from '@/assets/icons/calendar-day-light.svg';
@@ -102,6 +104,8 @@ const props = withDefaults(defineProps<{
   projectData: null,
   action: 'create'
 });
+
+const router = useRouter();
 
 const formData = ref({
   projectName: '',
@@ -250,13 +254,17 @@ const handleSubmit = async () => {
     if (props.action === 'edit' && props.projectData) {
       params.id = props.projectData.id;
       params.favorited = props.projectData.favorited;
-      const updatedProject = await projectApi.updateProject(params);
-      console.log('Project updated successfully:', updatedProject);
+      await projectApi.updateProject(params);
+      useToast().success('Projeto atualizado com sucesso!');
       return;
     }
-    const projects = await projectApi.saveProject(params);
-    console.log('Project saved successfully:', projects);
+    await projectApi.saveProject(params);
+    useToast().success('Projeto criado com sucesso!');
+    setTimeout(() => {
+      router.push('/');
+    }, 2000);
   } catch (error) {
+    useToast().error('Ocorreu um erro ao salvar o projeto. Tente novamente.');
     console.error('Error saving project:', error);
   }
 
