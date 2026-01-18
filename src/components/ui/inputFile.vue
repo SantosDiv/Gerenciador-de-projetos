@@ -262,9 +262,17 @@ const validate = () => {
   return true
 }
 
+const setFiles = (files: File[]) => {
+  selectedFiles.value = files
+  const result = props.multiple ? files : files
+  emit('update:modelValue', result)
+  emit('change', result)
+}
+
 defineExpose({
   clearFiles,
   validate,
+  setFiles,
   hasError: computed(() => hasError.value),
   selectedFiles: computed(() => selectedFiles.value)
 })

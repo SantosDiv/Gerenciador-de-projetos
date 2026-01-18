@@ -64,7 +64,7 @@ onMounted(() => {
         </Button>
       </div>
     </header>
-    <main class="px-10 flex gap-8 justify-start flex-wrap">
+    <main class="px-10 pb-10 flex gap-8 justify-start flex-wrap">
       <ProjectCard v-for="project in projects" :key="project.id" :project="project" />
     </main>
   </div> 

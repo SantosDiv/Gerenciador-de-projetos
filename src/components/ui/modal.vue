@@ -1,6 +1,12 @@
 <script setup lang="ts">
   import Button from './button.vue';
 
+  const props = withDefaults(defineProps<{
+    loading?: boolean
+  }>(), {
+    loading: false
+  })
+
   const emit = defineEmits<{
     cancel: []
     confirm: []
@@ -42,8 +48,7 @@
       
       <div class="pb-8 flex gap-8 justify-center">
         <Button label="Cancelar" outline @click="handleCancel" class="px-15 py-3! flex-1" />
-        <Button label="Confirmar" @click="handleConfirm" class="flex-2 py-3! px-15" />
-        
+        <Button label="Confirmar" @click="handleConfirm" class="flex-2 py-3! px-15" :disabled="loading" />
       </div>
     </div>
   </div>

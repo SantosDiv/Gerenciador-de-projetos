@@ -4,7 +4,7 @@ interface IProject {
   client: string;
   startDate: string;
   endDate: string;
-  imageUrl: FileList | File[] | null | undefined;
+  imageUrl: string | null | undefined;
   favorited: boolean;
 }
 

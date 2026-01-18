@@ -61,6 +61,7 @@
         </InputDate>
       </section>
       <InputFile
+        :ref="(el) => formRefs.projectImage = el"
         label="Capa do Projeto"
         v-model="formData.projectImage"
         class="w-full"
@@ -84,6 +85,8 @@
 import { ref, computed, watch, nextTick, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import { v4 as uuidv4 } from 'uuid';
+
 import Input from '@/components/ui/input.vue';
 import InputDate from '@/components/ui/inputDate.vue';
 import calendarDayLight from '@/assets/icons/calendar-day-light.svg';
@@ -94,8 +97,9 @@ import InputFile from '@/components/ui/inputFile.vue';
 
 import projectApi from '@/api/projectApi';
 
+import { base64ToFile, convertFileToBase64 } from '@/helpers/convertFiles';
+
 import type { IProject } from '@/interfaces/project';
-import { v4 as uuidv4 } from 'uuid';
 
 const props = withDefaults(defineProps<{
   projectData?: IProject | null;
@@ -119,7 +123,8 @@ const formRefs = ref({
   projectName: null as any,
   clientName: null as any,
   startDate: null as any,
-  endDate: null as any
+  endDate: null as any,
+  projectImage: null as any
 });
 
 const formValidation = ref({
@@ -199,7 +204,24 @@ const setInitialData = () => {
     formData.value.clientName = props.projectData.client;
     formData.value.startDate = props.projectData.startDate;
     formData.value.endDate = props.projectData.endDate;
-    formData.value.projectImage = props.projectData.imageUrl ? [] : null;
+    formData.value.projectImage = null;
+  }
+};
+
+const setExistingImage = async () => {
+  if (props.projectData?.imageUrl && formRefs.value.projectImage) {
+    try {
+      const file = base64ToFile(props.projectData.imageUrl);
+      const fileArray = [file];
+      
+      if (formRefs.value.projectImage?.setFiles) {
+        formRefs.value.projectImage.setFiles(fileArray);
+      }
+      
+      formData.value.projectImage = fileArray;
+    } catch (error) {
+      console.error('Erro ao carregar imagem existente:', error);
+    }
   }
 };
 
@@ -224,6 +246,9 @@ watch([() => formData.value.projectName, () => formData.value.clientName], () =>
 watch(() => props.projectData, (newProjectData) => {
   if (newProjectData && Object.keys(newProjectData).length > 0) {
     setInitialData();
+    nextTick(() => {
+      setExistingImage();
+    });
   }
 }, { immediate: true, deep: true });
 
@@ -231,13 +256,25 @@ const handleSubmit = async () => {
   const validations = Object.values(formValidation.value).map(field => !!field);
 
   if (!validations.every(valid => valid)) {
-    console.log('Formulário contém erros. Corrija os campos antes de continuar.');
+    useToast().error('Formulário contém erros. Corrija os campos antes de continuar.');
     return;
   }
 
   if (!isFormValid.value) {
-    console.log('Formulário inválido. Preencha todos os campos corretamente.');
+    useToast().error('Formulário inválido. Preencha todos os campos corretamente.');
     return;
+  }
+
+  let imageBase64: string | null = null;
+  if (formData.value.projectImage && formData.value.projectImage.length > 0) {
+    try {
+      const file = formData.value.projectImage[0] as File;
+      imageBase64 = await convertFileToBase64(file);
+    } catch (error) {
+      useToast().error('Erro ao processar a imagem. Tente novamente.');
+      console.error('Error converting image:', error);
+      return;
+    }
   }
 
   const params = {
@@ -246,7 +283,7 @@ const handleSubmit = async () => {
     client: formData.value.clientName,
     startDate: formData.value.startDate,
     endDate: formData.value.endDate,
-    imageUrl: formData.value.projectImage,
+    imageUrl: imageBase64,
     favorited: false,
   } as IProject;
 
@@ -254,6 +291,10 @@ const handleSubmit = async () => {
     if (props.action === 'edit' && props.projectData) {
       params.id = props.projectData.id;
       params.favorited = props.projectData.favorited;
+
+      if (!imageBase64 && props.projectData.imageUrl) {
+        params.imageUrl = props.projectData.imageUrl;
+      }
       await projectApi.updateProject(params);
       useToast().success('Projeto atualizado com sucesso!');
       return;
@@ -281,5 +322,10 @@ onMounted(() => {
     formValidation.value[fieldKey] = false;
   });
   setInitialData();
+  nextTick(() => {
+    if (props.projectData?.imageUrl) {
+      setExistingImage();
+    }
+  });
 });
 </script>

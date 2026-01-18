@@ -1,20 +1,27 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import Image1 from '../../assets/image-1.jpg';
-  import favoriteIcon from '../../assets/icons/favorite.svg';
-  import favoritedIcon from '../../assets/icons/favorited-icon.svg';
-  import CalendarDayLight from '../../assets/icons/calendar-day-light.svg';
-  import CalendarCheckLight from '../../assets/icons/calendar-check-light.svg';
+  import { useRouter } from 'vue-router';
+  import { useToast } from 'vue-toastification';
+  import placeholderImage from '@/assets/placeholderImage.jpg';
+  import favoriteIcon from '@/assets/icons/favorite.svg';
+  import favoritedIcon from '@/assets/icons/favorited-icon.svg';
+  import CalendarDayLight from '@/assets/icons/calendar-day-light.svg';
+  import CalendarCheckLight from '@/assets/icons/calendar-check-light.svg';
   import Dropdown from './dropdown.vue';
-  import Modal from '../ui/modal.vue';
+  import Modal from '@/components/ui/modal.vue';
   import type { IProject } from '@/interfaces/project';
+import projectApi from '@/api/projectApi';
 
   const props = defineProps<{
     project: IProject;
   }>();
 
+  const router = useRouter();
+  const toast = useToast();
+
   const openedDropdown = ref(false);
   const openRemoveModal = ref(false);
+  const loading = ref(false);
 
   function toggleDropdown() {
     openedDropdown.value = !openedDropdown.value;
@@ -25,13 +32,24 @@
     openedDropdown.value = false;
   }
 
-  function deleteProject() {
-    // Lógica para deletar o projeto
+  async function deleteProject() {
+    try {
+      loading.value = true;
+      await projectApi.deleteProject(props.project.id);
+      toast.success('Projeto removido com sucesso!');
+      setTimeout(() => {
+        loading.value = false;
+        openRemoveModal.value = false;
+        router.go(0); // Recarrega a página para atualizar a lista de projetos
+      }, 2000);
+    } catch (error) {
+      toast.error('Erro ao remover o projeto. Tente novamente mais tarde.');
+    }
   }
 
 </script>
 <template>
-  <Modal v-if="openRemoveModal" @cancel="openRemoveModal = false" @confirm="deleteProject">
+  <Modal v-if="openRemoveModal" @cancel="openRemoveModal = false" @confirm="deleteProject" :loading="loading">
     <template #title>
       <h2 class="text-[22px] font-semibold text-blue m-0">Remover Projeto</h2>
     </template>
@@ -42,7 +60,14 @@
   </Modal>
 
   <article class="w-86 bg-white rounded-2xl border border-gray-light-200 overflow-hidden">
-    <header class="h-58 rounded-t-2xl relative" :style="{background: `url(${Image1})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}">
+    <header class="h-58 rounded-t-2xl relative" :style="{
+      background: project.imageUrl && typeof project.imageUrl === 'string' && project.imageUrl.trim() !== '' 
+        ? `url(${project.imageUrl})` 
+        : `url(${placeholderImage})`, 
+      backgroundSize: 'cover', 
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center'
+    }">
       <div class="flex gap-6 items-center absolute bottom-4 right-4">
         <dropdown v-if="openedDropdown" :project-id="project.id" @remove="showRemoveModal" />
         <button class="cursor-pointer">
