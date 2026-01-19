@@ -54,6 +54,17 @@
     }
   }
 
+  async function toggleFavorite() {
+    try {
+      const updatedProject = { ...props.project, favorited: !props.project.favorited };
+      await projectApi.updateProject(updatedProject);
+      props.project.favorited = updatedProject.favorited;
+    } catch (error) {
+      toast.error('Erro ao atualizar o status de favorito. Tente novamente mais tarde.');
+      console.error('Erro ao atualizar favorito:', error);
+    }
+  }
+
 </script>
 <template>
   <Modal v-if="openRemoveModal" @cancel="openRemoveModal = false" @confirm="deleteProject" :loading="loading">
@@ -77,8 +88,8 @@
     }">
       <div class="flex gap-6 items-center absolute bottom-4 right-4">
         <dropdown v-if="openedDropdown" :project-id="project.id" @remove="showRemoveModal" />
-        <button class="cursor-pointer">
-          <img v-if="false" :src="favoritedIcon" alt="Ícone de favoritar projeto">
+        <button class="cursor-pointer" @click="toggleFavorite">
+          <img v-if="project.favorited" :src="favoritedIcon" alt="Ícone de favoritar projeto">
           <img v-else :src="favoriteIcon" alt="Ícone de favoritar projeto">
         </button>
         <button @click="toggleDropdown" class="cursor-pointer w-8 h-8 bg-white rounded-full text-secondary">
