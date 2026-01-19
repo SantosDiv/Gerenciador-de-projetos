@@ -3,7 +3,7 @@
     <header class="mb-17 flex justify-between items-center">
       <SearchBar class="relative rounded-none" />
     </header>
-    <main class="px-11">
+    <main class="px-4 md:px-11">
       <div class="flex items-center gap-2 max-w-20 text-secondary cursor-pointer" @click="goBack">
         <v-icon name="hi-arrow-sm-left" scale="1.3" />
         <span class="text-md">Voltar</span>
@@ -12,7 +12,7 @@
         Resultado da busca
       </h1>
       
-      <section v-if="searchResults.length > 0" class="flex gap-8 justify-start flex-wrap">
+      <section v-if="searchResults.length > 0" class="flex gap-8 justify-center md:justify-start flex-wrap">
         <ProjectCard
           v-for="project in searchResults"
           :key="project.id"

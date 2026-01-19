@@ -48,11 +48,11 @@ onMounted(() => {
 <template>
   <NotFoundProjects v-if="!projects.length && !filters.favorited" />
   <div v-else class="flex flex-col">
-    <header class="px-10 pt-15 pb-4 flex justify-between items-center">
+    <header class="px-10 pt-15 pb-4 flex flex-wrap justify-between items-center">
       <h1 class="text-2xl font-semibold text-blue flex items-center gap-2">
         Projetos <span class="font-normal! text-[17px]">({{ projects.length }})</span>
       </h1>
-      <div class="flex items-center justify-around gap-4">
+      <div class="flex flex-wrap md:flex-nowrap items-center justify-around gap-4 mt-4 md:mt-0">
         <div class="flex items-center gap-2 min-w-45">
           <Toggle @change="toggleFavorited" v-model="filters.favorited" />
           <span class="text-primary">Apenas favoritos</span>
@@ -70,7 +70,7 @@ onMounted(() => {
         </Button>
       </div>
     </header>
-    <main class="px-10 pb-10 flex gap-6 justify-start flex-wrap">
+    <main class="md:px-10 pb-10 flex gap-6 justify-center md:justify-start flex-wrap">
       <section v-if="!projects.length && filters.favorited" class="pt-6 flex flex-col items-center justify-center w-full gap-4">
         <v-icon name="ri-star-smile-fill" class="w-12 h-12 text-gray-light-300" />
         <p class="text-primary text-lg">Nenhum projeto marcado como favorito. <span class="text-sm font-normal">(ainda ;D)</span></p>

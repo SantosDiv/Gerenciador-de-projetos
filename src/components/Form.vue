@@ -1,6 +1,6 @@
 <template>
-  <section class="flex justify-center rounded-lg border border-gray-light-200 p-13">
-    <form @submit.prevent="handleSubmit" class="space-y-4 w-176 max-w-176">
+  <section class="flex justify-center rounded-lg border border-gray-light-200 p-4 md:p-13">
+    <form @submit.prevent="handleSubmit" class="space-y-4 w-full md:w-176 max-w-176">
       <div>
         <Input
           :ref="(el) => formRefs.projectName = el"
@@ -27,7 +27,7 @@
           :validate-on-blur="true"
         />
       </div>
-      <section class="flex gap-4">
+      <section class="flex flex-col md:flex-row gap-4">
         <InputDate
           :ref="(el) => formRefs.startDate = el"
           v-model="formData.startDate"

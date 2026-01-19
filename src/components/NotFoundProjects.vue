@@ -7,7 +7,7 @@
       <div class="flex flex-col items-center gap-8">
         <div class="flex flex-col items-center gap-6">
           <h2 class="text-2xl font-bold text-blue">Nenhum projeto</h2>
-          <p class="text-gray-700">Clique no botão abaixo para criar o primeiro e gerenciá-lo.</p>
+          <p class="text-gray-700 text-center">Clique no botão abaixo para criar o primeiro e gerenciá-lo.</p>
         </div>
         <Button label="Novo Projeto" @click="$router.push('/new')">
           <template #icon>

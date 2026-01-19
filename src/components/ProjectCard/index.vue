@@ -86,7 +86,7 @@
     </template>
   </Modal>
 
-  <article class="w-86 bg-white rounded-2xl border border-gray-light-200 overflow-hidden">
+  <article class="w-86 min-w-86 bg-white rounded-2xl border border-gray-light-200 overflow-hidden">
     <header class="h-58 rounded-t-2xl relative" :style="{
       background: project.imageUrl && typeof project.imageUrl === 'string' && project.imageUrl.trim() !== '' 
         ? `url(${project.imageUrl})` 

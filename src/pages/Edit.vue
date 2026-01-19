@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="pt-18 px-10">
+  <div class="pt-18 px-10 pb-10 md:pb-0">
     <div class="flex items-center gap-2 max-w-20 text-secondary cursor-pointer" @click="$router.back()">
       <v-icon name="hi-arrow-sm-left" scale="1.3" />
       <span class="text-md">Voltar</span>
