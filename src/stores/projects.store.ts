@@ -8,10 +8,14 @@ export const useProjectsStore = defineStore('projects', {
     searchResults: [] as IProject[],
   }),
   actions: {
-    async searchByTerm(term: string): Promise<IProject[]> {
+    async searchByTerm(term: string, saveToHistory: boolean = false): Promise<IProject[]> {
       const projects = await projectApi.getProjects({ name: term });
       this.searchTerm = term;
       this.searchResults = projects;
+
+      if (saveToHistory) {
+        projectApi.saveHistory(term);
+      }
 
       return projects;
     },

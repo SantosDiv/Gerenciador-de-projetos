@@ -42,7 +42,7 @@
 
   const searchByTerm = async (term: string) => {
     try {
-      await store.searchByTerm(term);
+      await store.searchByTerm(term, true);
       if (router.currentRoute.value.path !== '/search') {
         await router.push('/search');
       }

@@ -4,6 +4,7 @@
   import { useToast } from 'vue-toastification';
   import { useRouter, useRoute } from 'vue-router';
   import SearchHistory from './SearchHistory.vue';
+  import { PATHS } from '@/utils/costs';
 
   const store = useProjectsStore();
   const localSearchQuery = ref(store.searchTerm);
@@ -15,6 +16,7 @@
 
   // Debounce timeout
   let searchTimeout: number;
+  let lastSavedTerm = '';
 
   const emit = defineEmits<{
     close: []
@@ -42,7 +44,7 @@
     const term = localSearchQuery.value.trim();
     
     if (term.length < 3) {
-      if (router.currentRoute.value.path === '/search') {
+      if (router.currentRoute.value.path === PATHS.search) {
         store.$reset();
         router.push('/');
       }
@@ -52,9 +54,18 @@
     searchTimeout = window.setTimeout(async () => {
       if (term.length >= 3) {
         try {
-          await store.searchByTerm(term);
-          if (router.currentRoute.value.path !== '/search') {
-            await router.push('/search');
+          const shouldSaveToHistory = term !== lastSavedTerm && term.length >= 3;
+          
+          await store.searchByTerm(term, shouldSaveToHistory);
+          
+          if (shouldSaveToHistory) {
+            lastSavedTerm = term;
+          }
+          
+          if (router.currentRoute.value.path !== PATHS.search) {
+            if(route.path !== PATHS.search) {
+              await router.push(PATHS.search);
+            }
             await nextTick();
             if (inputRef.value) {
               inputRef.value.focus();
@@ -68,11 +79,41 @@
     }, 500);
   };
 
+  const handleEnterKey = async () => {
+    const term = localSearchQuery.value.trim();
+    if (term.length >= 3) {
+
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+      
+      try {
+        
+        await store.searchByTerm(term, true);
+        lastSavedTerm = term;
+        
+        if (router.currentRoute.value.path !== PATHS.search) {
+          if(route.path !== PATHS.search) {
+            await router.push(PATHS.search);
+          }
+          await nextTick();
+          if (inputRef.value) {
+            inputRef.value.focus();
+          }
+        }
+      } catch (error) {
+        toast.error('Erro ao buscar projetos. Por favor, tente novamente mais tarde.');
+        console.error('Erro ao buscar projetos:', error);
+      }
+    }
+  };
+
   onMounted(async () => {
     document.addEventListener('click', handleClickOutside);
     localSearchQuery.value = store.searchTerm;
+    lastSavedTerm = store.searchTerm;
     
-    if (route.path === '/search') {
+    if (route.path === PATHS.search) {
       await nextTick();
       if (inputRef.value) {
         inputRef.value.focus();
@@ -103,6 +144,7 @@
         class="rounded-md p-2 w-full focus:outline-none text-primary text-lg"
         v-model="localSearchQuery"
         @input="handleSearchInput"
+        @keydown.enter="handleEnterKey"
       />
     </div>
     <search-history />

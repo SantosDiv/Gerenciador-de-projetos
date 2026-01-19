@@ -83,6 +83,20 @@ class ProjectApi {
     }
   }
 
+  saveHistory(term: string): void {
+    const historyData = this.provider.getItem('searchHistory');
+    const history: string[] = historyData ? JSON.parse(historyData) : [];
+
+    if(history.length >= 5) {
+      history.pop();
+    }
+
+    if (!history.includes(term)) {
+      history.unshift(term);
+      this.provider.setItem('searchHistory', JSON.stringify(history));
+    }
+  }
+
   private filterProjectsByFavorited(projects: IProject[], favorited: boolean): IProject[] {
     return projects.filter(project => project.favorited === favorited);
   }
@@ -115,24 +129,9 @@ class ProjectApi {
 
   private searchProjectsByName(projects: IProject[], name: string): IProject[] {
     const nameLower = name.toLowerCase();
-    this.saveHistory(name);
     return projects.filter(project =>
       project.name.toLowerCase().includes(nameLower)
     );
-  }
-
-  private saveHistory(term: string): void {
-    const historyData = this.provider.getItem('searchHistory');
-    const history: string[] = historyData ? JSON.parse(historyData) : [];
-
-    if(history.length >= 5) {
-      history.pop();
-    }
-
-    if (!history.includes(term)) {
-      history.unshift(term);
-      this.provider.setItem('searchHistory', JSON.stringify(history));
-    }
   }
 }
 
