@@ -28,7 +28,7 @@ O Project Manager é uma aplicação web para gerenciamento de projetos que ofer
 
 ### Pré-requisitos
 
-- Node.js (versão 16 ou superior)
+- Node.js (Versão 22 ou superior)
 - Yarn ou npm
 
 ### Instalação
