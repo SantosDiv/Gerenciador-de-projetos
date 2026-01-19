@@ -51,9 +51,9 @@
       await projectApi.deleteProject(props.project.id);
       toast.success('Projeto removido com sucesso!');
       setTimeout(() => {
+        router.go(0);
         loading.value = false;
         openRemoveModal.value = false;
-        router.go(0);
       }, 2000);
     } catch (error) {
       toast.error('Erro ao remover o projeto. Tente novamente mais tarde.');
