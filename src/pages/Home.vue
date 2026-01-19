@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
 import NotFoundProjects from '@/components/NotFoundProjects.vue';
 import ProjectCard from '@/components/ProjectCard/index.vue';
 import Select from '@/components/ui/select.vue';
@@ -12,24 +13,53 @@ import type { IProject } from '@/interfaces/project';
 
 const projects = ref<IProject[]>([]);
 
+const toast = useToast();
+
 const orderOptions = [
-  { label: 'Ordem alfabética', value: 'alphabetical' },
-  { label: 'Iniciados mais recentes', value: 'most_recent' },
-  { label: 'Prazo mais próximo', value: 'nearest_deadline' }
+  { label: 'Ordem alfabética', value: 'name' },
+  { label: 'Iniciados mais recentes', value: 'startDate' },
+  { label: 'Prazo mais próximo', value: 'endDate' }
 ];
 
-const selectedOrder = ref('alphabetical');
+const filters = ref({
+  favorited: undefined as boolean | undefined,
+  orderBy: 'name' as 'name' | 'startDate' | 'endDate'
+});
 
-const handleOrderChange = (option: { label: string, value: string | number } | null) => {
-  if (option) {
-    console.log('Ordem selecionada:', option);
+const handleOrderChange = async (option: { label: string, value: string | number } | null) => {
+  try {
+    if (option) {
+      const orderedProjects = await projectApi.getProjects(filters.value);
+      projects.value = orderedProjects;
+    }
+  } catch (error) {
+    toast.error('Erro ao ordenar projetos. Por favor, tente novamente mais tarde.');
+    console.error('Erro ao ordenar projetos:', error);
   }
+};
+
+const toggleFavorited = async (isFavorited: boolean) => {
+  filters.value.favorited = isFavorited ? true : undefined;
+  if(!isFavorited) {
+    fetchProjects();
+    return;
+  }
+
+  const projectsFavorited = await projectApi.getProjects(filters.value);
+
+  if(!projectsFavorited.length) {
+    projects.value = [];
+    return;
+  }
+
+  projects.value = projectsFavorited;
 };
 
 async function fetchProjects() {
   try {
-    projects.value = await projectApi.getProjects();
+    projects.value = await projectApi.getProjects(filters.value);
   } catch (error) {
+    toast.error('Erro ao carregar projetos. Por favor, tente novamente mais tarde.');
     console.error('Erro ao buscar projetos:', error);
   }
 }
@@ -40,7 +70,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NotFoundProjects v-if="!projects.length" />
+  <NotFoundProjects v-if="!projects.length && !filters.favorited" />
   <div v-else class="flex flex-col">
     <header class="px-10 pt-15 pb-4 flex justify-between items-center">
       <h1 class="text-2xl font-semibold text-blue flex items-center gap-2">
@@ -48,12 +78,12 @@ onMounted(() => {
       </h1>
       <div class="flex items-center justify-around gap-4">
         <div class="flex items-center gap-2 min-w-45">
-          <Toggle />
+          <Toggle @change="toggleFavorited" v-model="filters.favorited" />
           <span class="text-primary">Apenas favoritos</span>
         </div>
         <Select 
           :options="orderOptions"
-          v-model="selectedOrder"
+          v-model="filters.orderBy"
           placeholder="Selecione a ordenação"
           @change="handleOrderChange"
         />
@@ -65,7 +95,11 @@ onMounted(() => {
       </div>
     </header>
     <main class="px-10 pb-10 flex gap-8 justify-start flex-wrap">
-      <ProjectCard v-for="project in projects" :key="project.id" :project="project" />
+      <section v-if="!projects.length && filters.favorited" class="pt-6 flex flex-col items-center justify-center w-full gap-4">
+        <v-icon name="ri-star-smile-fill" class="w-12 h-12 text-gray-light-300" />
+        <p class="text-primary text-lg">Nenhum projeto marcado como favorito. <span class="text-sm font-normal">(ainda ;D)</span></p>
+      </section>
+      <ProjectCard v-else v-for="project in projects" :key="project.id" :project="project" />
     </main>
   </div> 
 </template>

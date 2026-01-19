@@ -1,5 +1,11 @@
 import type { IProject } from "@/interfaces/project";
 
+interface ISearchParams {
+  favorited?: boolean;
+  orderBy?: 'name' | 'startDate' | 'endDate';
+  orderDirection?: 'asc' | 'desc';
+}
+
 class ProjectApi {
   provider: Storage;
 
@@ -18,10 +24,26 @@ class ProjectApi {
     }
   }
 
-  async getProjects(): Promise<IProject[]> {
+  async getProjects(searchParams?: ISearchParams): Promise<IProject[]> {
     try {
       const projectsData = this.provider.getItem('projects');
-      return projectsData ? JSON.parse(projectsData) : [];
+      const projectsDataParsed: IProject[] = projectsData ? JSON.parse(projectsData) : [];
+
+      let filteredProjects = projectsDataParsed;
+
+      if (searchParams?.favorited !== undefined) {
+        filteredProjects = this.filterProjectsByFavorited(filteredProjects, searchParams.favorited);
+      }
+
+      if (searchParams?.orderBy) {
+        filteredProjects = this.sortProjects(
+          filteredProjects,
+          searchParams.orderBy,
+          searchParams.orderDirection || 'asc'
+        );
+      }
+
+      return filteredProjects;
     } catch (error) {
       return Promise.reject(error);
     }
@@ -62,6 +84,36 @@ class ProjectApi {
       return Promise.reject(error);
     }
   }
+
+  private filterProjectsByFavorited(projects: IProject[], favorited: boolean): IProject[] {
+    return projects.filter(project => project.favorited === favorited);
+  }
+
+  private sortProjects(projects: IProject[], orderBy: 'name' | 'startDate' | 'endDate', orderDirection: 'asc' | 'desc'): IProject[] {
+    return projects.sort((a, b) => {
+          let aValue: string | number = '';
+          let bValue: string | number = '';
+
+          switch (orderBy) {
+            case 'name':
+              aValue = a.name.toLowerCase();
+              bValue = b.name.toLowerCase();
+              break;
+            case 'startDate':
+              aValue = new Date(a.startDate).getTime();
+              bValue = new Date(b.startDate).getTime();
+              break;
+            case 'endDate':
+              aValue = new Date(a.endDate).getTime();
+              bValue = new Date(b.endDate).getTime();
+              break;
+          }
+
+          if (aValue < bValue) return orderDirection === 'asc' ? -1 : 1;
+          if (aValue > bValue) return orderDirection === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
 }
 
 export default new ProjectApi();

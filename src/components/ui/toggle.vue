@@ -1,9 +1,8 @@
 <template>
   <div class="flex items-center gap-2">
-    
     <button
       @click="toggleSwitch"
-      class="relative inline-flex h-6 w-12 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      class="relative inline-flex h-6 w-12 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:none"
       :style="{ backgroundColor: isEnabled ? enabledColor : disabledColor }"
       :aria-pressed="isEnabled"
       type="button"
