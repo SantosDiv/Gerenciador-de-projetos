@@ -100,7 +100,7 @@
         ref="inputRef"
         type="text"
         placeholder="Digite o nome do projeto..."
-        class="rounded-md p-2 w-full focus:outline-none text-gray"
+        class="rounded-md p-2 w-full focus:outline-none text-primary text-lg"
         v-model="localSearchQuery"
         @input="handleSearchInput"
       />
