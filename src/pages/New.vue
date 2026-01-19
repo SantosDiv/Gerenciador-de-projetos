@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import Backward from '@/components/Backward.vue';
-import Form from '@/components/Form.vue'
+  import Form from '@/components/Form.vue';
 </script>
 
 <template>

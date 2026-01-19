@@ -9,25 +9,25 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { showHeader: true }
+    meta: { showHeader: true, showSearchIcon: true }
   },
   {
     path: '/new',
     name: 'New',
     component: New,
-    meta: { showHeader: true }
+    meta: { showHeader: true, showSearchIcon: false }
   },
   {
     path: '/edit/:id',
     name: 'Edit',
     component: Edit,
-    meta: { showHeader: true }
+    meta: { showHeader: true, showSearchIcon: false }
   },
   {
     path: '/search',
     name: 'Search',
     component: Search,
-    meta: { showHeader: false }
+    meta: { showHeader: false, showSearchIcon: false }
   }
 ]
 
