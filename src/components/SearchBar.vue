@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-  import {ref, onMounted, onUnmounted } from 'vue';
+  import {ref, onMounted, onUnmounted, nextTick } from 'vue';
   import backwardHistory from '@/assets/icons/backward-history.svg';
   import { useProjectsStore } from '@/stores/projects.store';
   import { useToast } from 'vue-toastification';
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
 
   const store = useProjectsStore();
   const localSearchQuery = ref(store.searchTerm);
   const searchSection = ref<HTMLElement | null>(null);
+  const inputRef = ref<HTMLInputElement | null>(null);
   const toast = useToast();
   const router = useRouter();
+  const route = useRoute();
 
   // Debounce timeout
   let searchTimeout: number;
@@ -39,8 +41,9 @@
     
     const term = localSearchQuery.value.trim();
     
-    if (!term) {
+    if (term.length < 3) {
       if (router.currentRoute.value.path === '/search') {
+        store.$reset();
         router.push('/');
       }
       return;
@@ -51,7 +54,11 @@
         try {
           await store.searchByTerm(term);
           if (router.currentRoute.value.path !== '/search') {
-            router.push('/search');
+            await router.push('/search');
+            await nextTick();
+            if (inputRef.value) {
+              inputRef.value.focus();
+            }
           }
         } catch (error) {
           toast.error('Erro ao buscar projetos. Por favor, tente novamente mais tarde.');
@@ -61,9 +68,16 @@
     }, 300);
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     document.addEventListener('click', handleClickOutside);
     localSearchQuery.value = store.searchTerm;
+    
+    if (route.path === '/search') {
+      await nextTick();
+      if (inputRef.value) {
+        inputRef.value.focus();
+      }
+    }
   });
 
   onUnmounted(() => {
@@ -83,6 +97,7 @@
     <div class="flex items-center gap-2 w-full">
       <v-icon name="ri-search-line" class="w-6 h-6 cursor-pointer text-secondary" />
       <input
+        ref="inputRef"
         type="text"
         placeholder="Digite o nome do projeto..."
         class="rounded-md p-2 w-full focus:outline-none text-gray"
