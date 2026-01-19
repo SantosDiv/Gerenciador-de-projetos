@@ -128,7 +128,7 @@ class ProjectApi {
     if(history.length >= 5) {
       history.pop();
     }
-    console.log(history);
+
     if (!history.includes(term)) {
       history.unshift(term);
       this.provider.setItem('searchHistory', JSON.stringify(history));

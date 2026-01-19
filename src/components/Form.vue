@@ -292,9 +292,6 @@ const handleSubmit = async () => {
       params.id = props.projectData.id;
       params.favorited = props.projectData.favorited;
 
-      if (!imageBase64 && props.projectData.imageUrl) {
-        params.imageUrl = props.projectData.imageUrl;
-      }
       await projectApi.updateProject(params);
       useToast().success('Projeto atualizado com sucesso!');
       return;

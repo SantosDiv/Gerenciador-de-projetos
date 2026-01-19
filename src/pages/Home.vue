@@ -70,7 +70,7 @@ onMounted(() => {
         </Button>
       </div>
     </header>
-    <main class="px-10 pb-10 flex gap-8 justify-start flex-wrap">
+    <main class="px-10 pb-10 flex gap-6 justify-start flex-wrap">
       <section v-if="!projects.length && filters.favorited" class="pt-6 flex flex-col items-center justify-center w-full gap-4">
         <v-icon name="ri-star-smile-fill" class="w-12 h-12 text-gray-light-300" />
         <p class="text-primary text-lg">Nenhum projeto marcado como favorito. <span class="text-sm font-normal">(ainda ;D)</span></p>
