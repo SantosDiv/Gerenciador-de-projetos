@@ -12,13 +12,8 @@ export const useProjectsStore = defineStore('projects', {
       const projects = await projectApi.getProjects({ name: term });
       this.searchTerm = term;
       this.searchResults = projects;
-      console.log('Search results:', projects);
+
       return projects;
     },
-    
-    clearSearch() {
-      this.searchTerm = '';
-      this.searchResults = [];
-    }
   },
 });

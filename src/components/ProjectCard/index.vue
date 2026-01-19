@@ -95,7 +95,7 @@
           <img v-if="project.favorited" :src="favoritedIcon" alt="Ícone de favoritar projeto">
           <img v-else :src="favoriteIcon" alt="Ícone de favoritar projeto">
         </button>
-        <button @click="toggleDropdown" class="cursor-pointer w-8 h-8 bg-white rounded-full text-secondary">
+        <button @click="toggleDropdown" class="cursor-pointer shadow-md w-8 h-8 bg-white rounded-full text-secondary">
           <v-icon name="bi-three-dots" />
         </button>
       </div>

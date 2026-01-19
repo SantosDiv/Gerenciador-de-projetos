@@ -1,4 +1,4 @@
-import type { IProject, ISearchParams } from "@/interfaces/project.interface";
+import type { IProject, ISearchParams, orderByOptions } from "@/interfaces/project.interface";
 
 class ProjectApi {
   provider: Storage;
@@ -38,10 +38,7 @@ class ProjectApi {
       }
 
       if (searchParams?.name) {
-        const nameLower = searchParams.name.toLowerCase();
-        filteredProjects = filteredProjects.filter(project =>
-          project.name.toLowerCase().includes(nameLower)
-        );
+        filteredProjects = this.searchProjectsByName(filteredProjects, searchParams.name);
       }
 
       return filteredProjects;
@@ -90,31 +87,53 @@ class ProjectApi {
     return projects.filter(project => project.favorited === favorited);
   }
 
-  private sortProjects(projects: IProject[], orderBy: 'name' | 'startDate' | 'endDate', orderDirection: 'asc' | 'desc'): IProject[] {
+  private sortProjects(projects: IProject[], orderBy: orderByOptions, orderDirection: 'asc' | 'desc'): IProject[] {
     return projects.sort((a, b) => {
-          let aValue: string | number = '';
-          let bValue: string | number = '';
+      let aValue: string | number = '';
+      let bValue: string | number = '';
 
-          switch (orderBy) {
-            case 'name':
-              aValue = a.name.toLowerCase();
-              bValue = b.name.toLowerCase();
-              break;
-            case 'startDate':
-              aValue = new Date(a.startDate).getTime();
-              bValue = new Date(b.startDate).getTime();
-              break;
-            case 'endDate':
-              aValue = new Date(a.endDate).getTime();
-              bValue = new Date(b.endDate).getTime();
-              break;
-          }
-
-          if (aValue < bValue) return orderDirection === 'asc' ? -1 : 1;
-          if (aValue > bValue) return orderDirection === 'asc' ? 1 : -1;
-          return 0;
-        });
+      switch (orderBy) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'startDate':
+          aValue = new Date(a.startDate).getTime();
+          bValue = new Date(b.startDate).getTime();
+          break;
+        case 'endDate':
+          aValue = new Date(a.endDate).getTime();
+          bValue = new Date(b.endDate).getTime();
+          break;
       }
+
+      if (aValue < bValue) return orderDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return orderDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  private searchProjectsByName(projects: IProject[], name: string): IProject[] {
+    const nameLower = name.toLowerCase();
+    this.saveHistory(name);
+    return projects.filter(project =>
+      project.name.toLowerCase().includes(nameLower)
+    );
+  }
+
+  private saveHistory(term: string): void {
+    const historyData = this.provider.getItem('searchHistory');
+    const history: string[] = historyData ? JSON.parse(historyData) : [];
+
+    if(history.length >= 5) {
+      history.pop();
+    }
+    console.log(history);
+    if (!history.includes(term)) {
+      history.unshift(term);
+      this.provider.setItem('searchHistory', JSON.stringify(history));
+    }
+  }
 }
 
 export default new ProjectApi();

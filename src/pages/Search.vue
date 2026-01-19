@@ -38,7 +38,7 @@
   const searchResults = computed(() => store.searchResults);
   
   const goBack = () => {
-    store.clearSearch();
+    store.$reset();
     router.push('/');
   };
 </script>

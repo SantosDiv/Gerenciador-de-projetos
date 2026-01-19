@@ -1,9 +1,9 @@
 <script lang="ts" setup>
   import {ref, onMounted, onUnmounted, nextTick } from 'vue';
-  import backwardHistory from '@/assets/icons/backward-history.svg';
   import { useProjectsStore } from '@/stores/projects.store';
   import { useToast } from 'vue-toastification';
   import { useRouter, useRoute } from 'vue-router';
+  import SearchHistory from './SearchHistory.vue';
 
   const store = useProjectsStore();
   const localSearchQuery = ref(store.searchTerm);
@@ -65,7 +65,7 @@
           console.error('Erro ao buscar projetos:', error);
         }
       }
-    }, 300);
+    }, 500);
   };
 
   onMounted(async () => {
@@ -92,7 +92,7 @@
 <template>
   <section 
     ref="searchSection"
-    class="absolute top-0 w-full flex flex-col justify-center items-center bg-white border-2 border-secondary rounded-2xl p-4 shadow-lg"
+    class="absolute z-10 top-0 w-full flex flex-col justify-center items-center bg-white border-2 border-secondary rounded-2xl p-4 shadow-lg"
   >
     <div class="flex items-center gap-2 w-full">
       <v-icon name="ri-search-line" class="w-6 h-6 cursor-pointer text-secondary" />
@@ -105,14 +105,6 @@
         @input="handleSearchInput"
       />
     </div>
-    <ul class="w-full">
-      <li class="flex items-center justify-between text-gray border-t border-secondary-light p-2 mt-2">
-        <div class="flex items-center gap-4">
-          <img :src="backwardHistory" alt="Ícone de histórico de navegação para trás" class="h-4 cursor-pointer text-secondary" />
-          <span>Pesquisa 1</span>
-        </div>
-        <v-icon name="md-close-round" class="w-6 h-6 cursor-pointer text-gray" />
-      </li>
-    </ul>
+    <search-history />
   </section>
 </template>
