@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import Form from '@/components/Form.vue'
-import type { IProject } from '@/interfaces/project'
+import type { IProject } from '@/interfaces/project.interface'
 import projectApi from '@/api/projectApi'
 
 const route = useRoute()

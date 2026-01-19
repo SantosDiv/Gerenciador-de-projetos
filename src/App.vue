@@ -1,10 +1,18 @@
 <script setup lang="ts">
   import Header from './components/Header.vue';
+  import { computed } from 'vue';
+  import { useRoute } from 'vue-router';
+
+  const route = useRoute();
+
+  const shouldShowHeader = computed(() => {
+    return route.meta?.showHeader !== false;
+  });
 </script>
 
 <template>
   <div>
-    <Header />
+    <Header v-if="shouldShowHeader" />
     <router-view />
   </div>
 </template>

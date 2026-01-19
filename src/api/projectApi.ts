@@ -1,10 +1,4 @@
-import type { IProject } from "@/interfaces/project";
-
-interface ISearchParams {
-  favorited?: boolean;
-  orderBy?: 'name' | 'startDate' | 'endDate';
-  orderDirection?: 'asc' | 'desc';
-}
+import type { IProject, ISearchParams } from "@/interfaces/project.interface";
 
 class ProjectApi {
   provider: Storage;
@@ -40,6 +34,13 @@ class ProjectApi {
           filteredProjects,
           searchParams.orderBy,
           searchParams.orderDirection || 'asc'
+        );
+      }
+
+      if (searchParams?.name) {
+        const nameLower = searchParams.name.toLowerCase();
+        filteredProjects = filteredProjects.filter(project =>
+          project.name.toLowerCase().includes(nameLower)
         );
       }
 

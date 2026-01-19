@@ -1,10 +1,19 @@
 <script lang="ts" setup>
-  import {ref, onMounted, onUnmounted} from 'vue';
+  import {ref, onMounted, onUnmounted } from 'vue';
   import backwardHistory from '@/assets/icons/backward-history.svg';
+  import { useProjectsStore } from '@/stores/projects.store';
+  import { useToast } from 'vue-toastification';
+  import { useRouter } from 'vue-router';
 
-  const searchQuery = ref('');
+  const store = useProjectsStore();
+  const localSearchQuery = ref(store.searchTerm);
   const searchSection = ref<HTMLElement | null>(null);
-  
+  const toast = useToast();
+  const router = useRouter();
+
+  // Debounce timeout
+  let searchTimeout: number;
+
   const emit = defineEmits<{
     close: []
   }>();
@@ -21,12 +30,47 @@
     }
   };
 
+  const handleSearchInput = () => {
+    store.searchTerm = localSearchQuery.value;
+    
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    const term = localSearchQuery.value.trim();
+    
+    if (!term) {
+      if (router.currentRoute.value.path === '/search') {
+        router.push('/');
+      }
+      return;
+    }
+
+    searchTimeout = window.setTimeout(async () => {
+      if (term.length >= 3) {
+        try {
+          await store.searchByTerm(term);
+          if (router.currentRoute.value.path !== '/search') {
+            router.push('/search');
+          }
+        } catch (error) {
+          toast.error('Erro ao buscar projetos. Por favor, tente novamente mais tarde.');
+          console.error('Erro ao buscar projetos:', error);
+        }
+      }
+    }, 300);
+  };
+
   onMounted(() => {
     document.addEventListener('click', handleClickOutside);
+    localSearchQuery.value = store.searchTerm;
   });
 
   onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
   });
 
 </script>
@@ -42,7 +86,8 @@
         type="text"
         placeholder="Digite o nome do projeto..."
         class="rounded-md p-2 w-full focus:outline-none text-gray"
-        v-model="searchQuery"
+        v-model="localSearchQuery"
+        @input="handleSearchInput"
       />
     </div>
     <ul class="w-full">

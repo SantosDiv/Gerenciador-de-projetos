@@ -10,10 +10,12 @@
   import CalendarCheckLight from '@/assets/icons/calendar-check-light.svg';
   import Dropdown from './dropdown.vue';
   import Modal from '@/components/ui/modal.vue';
+  import HighlightText from '@/components/ui/highlightText.vue';
+  import { useProjectsStore } from '@/stores/projects.store';
 
   import projectApi from '@/api/projectApi';
 
-  import type { IProject } from '@/interfaces/project';
+  import type { IProject } from '@/interfaces/project.interface';
 
   const formatDatePtBr = (dateString: string): string => {
     return dayjs(dateString).format('D [de] MMMM [de] YYYY');
@@ -25,6 +27,7 @@
 
   const router = useRouter();
   const toast = useToast();
+  const store = useProjectsStore();
 
   const openedDropdown = ref(false);
   const openRemoveModal = ref(false);
@@ -47,7 +50,7 @@
       setTimeout(() => {
         loading.value = false;
         openRemoveModal.value = false;
-        router.go(0); // Recarrega a página para atualizar a lista de projetos
+        router.go(0);
       }, 2000);
     } catch (error) {
       toast.error('Erro ao remover o projeto. Tente novamente mais tarde.');
@@ -99,7 +102,9 @@
     </header>
     
     <main class="p-6">
-      <h1 class="font-bold text-blue text-xl">{{project.name}}</h1>
+      <h1 class="font-bold text-blue text-xl">
+        <HighlightText :text="project.name" :highlight="store.searchTerm" />
+      </h1>
       <h2 class="text-gray text-md mb-4"><span class="font-bold">Cliente:</span> {{ project.client }}</h2>
 
       <div class="space-y-4 border-t border-gray-light-100 pt-4 text-gray">

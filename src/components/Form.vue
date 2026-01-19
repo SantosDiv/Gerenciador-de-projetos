@@ -99,7 +99,7 @@ import projectApi from '@/api/projectApi';
 
 import { base64ToFile, convertFileToBase64 } from '@/helpers/convertFiles';
 
-import type { IProject } from '@/interfaces/project';
+import type { IProject } from '@/interfaces/project.interface';
 
 const props = withDefaults(defineProps<{
   projectData?: IProject | null;

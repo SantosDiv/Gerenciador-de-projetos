@@ -9,7 +9,7 @@ import Toggle from '@/components/ui/toggle.vue';
 
 import projectApi from '@/api/projectApi';
 
-import type { IProject } from '@/interfaces/project';
+import type { IProject, orderByOptions } from '@/interfaces/project.interface';
 
 const projects = ref<IProject[]>([]);
 
@@ -23,36 +23,12 @@ const orderOptions = [
 
 const filters = ref({
   favorited: undefined as boolean | undefined,
-  orderBy: 'name' as 'name' | 'startDate' | 'endDate'
+  orderBy: 'name' as orderByOptions
 });
-
-const handleOrderChange = async (option: { label: string, value: string | number } | null) => {
-  try {
-    if (option) {
-      const orderedProjects = await projectApi.getProjects(filters.value);
-      projects.value = orderedProjects;
-    }
-  } catch (error) {
-    toast.error('Erro ao ordenar projetos. Por favor, tente novamente mais tarde.');
-    console.error('Erro ao ordenar projetos:', error);
-  }
-};
 
 const toggleFavorited = async (isFavorited: boolean) => {
   filters.value.favorited = isFavorited ? true : undefined;
-  if(!isFavorited) {
-    fetchProjects();
-    return;
-  }
-
-  const projectsFavorited = await projectApi.getProjects(filters.value);
-
-  if(!projectsFavorited.length) {
-    projects.value = [];
-    return;
-  }
-
-  projects.value = projectsFavorited;
+  await fetchProjects();
 };
 
 async function fetchProjects() {
@@ -85,7 +61,7 @@ onMounted(() => {
           :options="orderOptions"
           v-model="filters.orderBy"
           placeholder="Selecione a ordenação"
-          @change="handleOrderChange"
+          @change="fetchProjects"
         />
         <Button label="Novo Projeto" class="w-full px-6! py-2!" @click="$router.push('/new')">
           <template #icon>
