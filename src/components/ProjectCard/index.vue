@@ -3,15 +3,18 @@
   import { useRouter } from 'vue-router';
   import { useToast } from 'vue-toastification';
   import dayjs from 'dayjs';
+  import { useProjectsStore } from '@/stores/projects.store';
+
+  import Dropdown from './dropdown.vue';
+  import Modal from '@/components/ui/modal.vue';
+  import HighlightText from '@/components/ui/highlightText.vue';
+
   import placeholderImage from '@/assets/placeholderImage.jpg';
   import favoriteIcon from '@/assets/icons/favorite.svg';
   import favoritedIcon from '@/assets/icons/favorited-icon.svg';
   import CalendarDayLight from '@/assets/icons/calendar-day-light.svg';
   import CalendarCheckLight from '@/assets/icons/calendar-check-light.svg';
-  import Dropdown from './dropdown.vue';
-  import Modal from '@/components/ui/modal.vue';
-  import HighlightText from '@/components/ui/highlightText.vue';
-  import { useProjectsStore } from '@/stores/projects.store';
+  import trash from '@/assets/icons/trash.svg';
 
   import projectApi from '@/api/projectApi';
 
@@ -72,11 +75,14 @@
 <template>
   <Modal v-if="openRemoveModal" @cancel="openRemoveModal = false" @confirm="deleteProject" :loading="loading">
     <template #title>
-      <h2 class="text-[22px] font-semibold text-blue m-0">Remover Projeto</h2>
+      <div class="absolute left-1/2 transform -translate-x-1/2 -top-8 shadow-lg bg-secondary rounded-full w-15 h-15 flex items-center justify-center">
+        <img :src="trash" alt="Ícone de lixeira" class="w-4.5 h-4.5 inline-block" />
+      </div>
+      <h2 class="text-[22px] font-semibold text-blue m-0 mt-5">Remover Projeto</h2>
     </template>
     <template #body>
-      <p class="text-gray">Esta ação removerá definitivamente o projeto:</p>
-      <p class="text-primary text-2xl font-bold mt-2">{{ project.name }}</p>
+      <p class="text-gray">Essa ação removerá definitivamente o projeto:</p>
+      <p class="text-primary text-2xl font-medium mt-2">{{ project.name }}</p>
     </template>
   </Modal>
 

@@ -31,10 +31,10 @@
     @click="handleBackdropClick"
   >
     <div 
-      class="bg-white rounded-xl shadow-2xl max-w-lg w-[90%] max-h-[90vh] overflow-hidden flex flex-col px-8" 
+      class="bg-white rounded-xl shadow-2xl max-w-lg w-[90%] max-h-[90vh] flex flex-col px-8" 
       @click.stop
     >
-      <div class="px-6 pt-6 pb-4 border-b border-gray-light-300 flex justify-center">
+      <div class="px-6 pt-6 pb-4 border-b border-gray-light-300 flex justify-center relative">
         <slot name="title">
           <h2 class="text-2xl font-semibold text-blue m-0">Modal</h2>
         </slot>
