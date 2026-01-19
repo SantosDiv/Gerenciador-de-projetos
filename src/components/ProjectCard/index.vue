@@ -9,7 +9,7 @@
   import Modal from '@/components/ui/modal.vue';
   import HighlightText from '@/components/ui/highlightText.vue';
 
-  import placeholderImage from '@/assets/placeholderImage.jpg';
+  import placeholderImage from '@/assets/placeholderImage.webp';
   import favoriteIcon from '@/assets/icons/favorite.svg';
   import favoritedIcon from '@/assets/icons/favorited-icon.svg';
   import CalendarDayLight from '@/assets/icons/calendar-day-light.svg';
